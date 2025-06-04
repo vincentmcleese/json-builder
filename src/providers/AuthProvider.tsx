@@ -1,6 +1,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { useAuthState } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
   user: User | null;
@@ -21,10 +22,16 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { user, signOut } = useAuthState();
+  const navigate = useNavigate();
+  const { user, signOut: authSignOut } = useAuthState();
+
+  const handleSignOut = async () => {
+    await authSignOut();
+    navigate('/');
+  };
 
   return (
-    <AuthContext.Provider value={{ user, signOut }}>
+    <AuthContext.Provider value={{ user, signOut: handleSignOut }}>
       {children}
     </AuthContext.Provider>
   );

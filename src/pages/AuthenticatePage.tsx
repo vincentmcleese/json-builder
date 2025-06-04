@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { User } from '@supabase/supabase-js';
+import { useAuth } from '@/providers/AuthProvider';
 
 interface AuthLog {
   timestamp: string;
@@ -11,14 +12,13 @@ interface AuthLog {
 }
 
 export default function AuthenticatePage() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, signOut } = useAuth();
   const [logs, setLogs] = useState<AuthLog[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
       addLog('Session check', session ? 'User is logged in' : 'No active session');
     });
 
@@ -26,7 +26,6 @@ export default function AuthenticatePage() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
       addLog('Auth state change', session ? 'User logged in' : 'User logged out');
     });
 
@@ -69,15 +68,10 @@ export default function AuthenticatePage() {
     }
   };
 
-  const handleLogout = async () => {
+  const handleSignOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        throw error;
-      }
+      await signOut();
       addLog('Logout', 'User logged out successfully');
-      toast.success('Logged out successfully');
-      navigate('/');
     } catch (error) {
       console.error('Error:', error);
       addLog('Logout error', error instanceof Error ? error.message : 'Unknown error');
@@ -97,7 +91,7 @@ export default function AuthenticatePage() {
               Logged in as: <span className="font-semibold">{user.email}</span>
             </p>
             <button
-              onClick={handleLogout}
+              onClick={handleSignOut}
               className="btn btn-primary"
             >
               Sign Out
