@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
 
 interface AuthLog {
