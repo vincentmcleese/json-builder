@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { callOpenRouter } from '@/lib/openrouter';
+import { useAuth } from '@/providers/AuthProvider';
+import AuthModal from '@/components/AuthModal';
 import toast from 'react-hot-toast';
 
 interface Tool {
@@ -38,7 +40,6 @@ interface ToolsByType {
   process: Tool[];
   action: Tool[];
 }
-
 
 const extractJsonFromText = (text: string): string => {
   try {
@@ -127,6 +128,8 @@ const extractJsonFromText = (text: string): string => {
 
 export default function WorkflowBuilder() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [inputPrompt, setInputPrompt] = useState('');
   const [workflowData, setWorkflowData] = useState<WorkflowData | null>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -290,6 +293,11 @@ export default function WorkflowBuilder() {
       return;
     }
 
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     try {
       setIsCreatingJson(true);
 
@@ -332,7 +340,8 @@ export default function WorkflowBuilder() {
           validation_prompt_id: validationPromptId,
           json_creation_prompt_id: jsonCreationPromptId,
           title: `Workflow ${new Date().toISOString()}`,
-          description: inputPrompt
+          description: inputPrompt,
+          user_id: user.id
         })
         .select()
         .single();
@@ -526,6 +535,17 @@ export default function WorkflowBuilder() {
             </button>
           </div>
         </div>
+      )}
+
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={() => {
+            setShowAuthModal(false);
+            createJson();
+          }}
+        />
       )}
     </div>
   );
