@@ -39,7 +39,9 @@ export default function AdminPanel() {
   }, []);
 
   const checkConnection = async () => {
+    console.log('Checking Supabase connection...');
     const isConnected = await checkSupabaseConnection();
+    console.log('Connection status:', isConnected);
     setConnectionStatus(isConnected);
     if (isConnected) {
       loadData();
@@ -227,13 +229,24 @@ export default function AdminPanel() {
             <li>Missing or incorrect environment variables</li>
             <li>Network connectivity issues</li>
             <li>Database service unavailability</li>
+            <li>CORS configuration issues</li>
           </ul>
-          <button
-            onClick={checkConnection}
-            className="btn btn-primary"
-          >
-            Retry Connection
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={checkConnection}
+              className="btn btn-primary"
+            >
+              Retry Connection
+            </button>
+            <a 
+              href={`${import.meta.env.VITE_SUPABASE_URL}/project/settings/api`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+            >
+              Check Supabase Settings
+            </a>
+          </div>
         </div>
       </div>
     );
