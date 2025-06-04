@@ -39,8 +39,14 @@ interface ToolsByType {
   action: Tool[];
 }
 
-interface SystemPrompt {
-  id: string;
+interface ValidationPrompt {
+  prompt: string;
+  ai_models: {
+    model_id: string;
+  };
+}
+
+interface JsonCreationPrompt {
   prompt: string;
   ai_models: {
     model_id: string;
@@ -60,7 +66,6 @@ const extractJsonFromText = (text: string): string => {
     const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (codeBlockMatch) {
       const jsonStr = preprocessText(codeBlockMatch[1]);
-      console.log('Extracted JSON from code block:', jsonStr);
       JSON.parse(jsonStr);
       return jsonStr;
     }
@@ -68,7 +73,6 @@ const extractJsonFromText = (text: string): string => {
     const singleTickMatch = text.match(/`([\s\S]*?)`/);
     if (singleTickMatch) {
       const jsonStr = preprocessText(singleTickMatch[1]);
-      console.log('Extracted JSON from single ticks:', jsonStr);
       JSON.parse(jsonStr);
       return jsonStr;
     }
@@ -113,14 +117,12 @@ const extractJsonFromText = (text: string): string => {
 
     if (start !== -1 && end !== -1) {
       const jsonStr = preprocessText(text.substring(start, end));
-      console.log('Extracted JSON from balanced braces:', jsonStr);
       JSON.parse(jsonStr);
       return jsonStr;
     }
 
     const processedText = preprocessText(text);
     if (processedText.startsWith('{') && processedText.endsWith('}')) {
-      console.log('Processing entire text as JSON:', processedText);
       JSON.parse(processedText);
       return processedText;
     }
