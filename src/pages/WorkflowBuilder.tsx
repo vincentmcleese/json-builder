@@ -41,13 +41,6 @@ interface ToolsByType {
   action: Tool[];
 }
 
-interface SystemPrompt {
-  id: string;
-  prompt: string;
-  ai_models: Array<{
-    model_id: string;
-  }>;
-}
 
 const extractJsonFromText = (text: string): string => {
   try {
