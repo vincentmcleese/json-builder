@@ -153,7 +153,7 @@ export default function WorkflowBuilder() {
 
   const loadPrompts = async () => {
     try {
-      const { data: jsonCreationPrompt, error: jsonError } = await supabase
+      const { data: jsonCreationPrompts, error: jsonError } = await supabase
         .from('system_prompts')
         .select(`
           id,
@@ -163,22 +163,22 @@ export default function WorkflowBuilder() {
           )
         `)
         .eq('step', 'json_creation')
-        .single();
+        .limit(1);
 
       if (jsonError) throw jsonError;
-      if (jsonCreationPrompt?.id) {
-        setJsonCreationPromptId(jsonCreationPrompt.id);
+      if (jsonCreationPrompts?.[0]?.id) {
+        setJsonCreationPromptId(jsonCreationPrompts[0].id);
       }
 
-      const { data: validationPrompt, error: validationError } = await supabase
+      const { data: validationPrompts, error: validationError } = await supabase
         .from('system_prompts')
         .select('id')
         .eq('step', 'validation')
-        .single();
+        .limit(1);
 
       if (validationError) throw validationError;
-      if (validationPrompt?.id) {
-        setValidationPromptId(validationPrompt.id);
+      if (validationPrompts?.[0]?.id) {
+        setValidationPromptId(validationPrompts[0].id);
       }
     } catch (error) {
       console.error('Failed to load prompts:', error);
@@ -239,7 +239,7 @@ export default function WorkflowBuilder() {
       setIsValidating(true);
       setIsValidated(false);
       
-      const { data: validationPrompt } = await supabase
+      const { data: validationPrompts, error: validationError } = await supabase
         .from('system_prompts')
         .select(`
           id,
@@ -249,8 +249,11 @@ export default function WorkflowBuilder() {
           )
         `)
         .eq('step', 'validation')
-        .single();
+        .limit(1);
 
+      if (validationError) throw validationError;
+      
+      const validationPrompt = validationPrompts?.[0];
       if (!validationPrompt?.id || !validationPrompt.prompt || !validationPrompt.ai_models?.[0]?.model_id) {
         throw new Error('Validation prompt not found');
       }
@@ -301,7 +304,7 @@ export default function WorkflowBuilder() {
     try {
       setIsCreatingJson(true);
 
-      const { data: jsonPrompt } = await supabase
+      const { data: jsonPrompts, error: jsonError } = await supabase
         .from('system_prompts')
         .select(`
           id,
@@ -311,8 +314,11 @@ export default function WorkflowBuilder() {
           )
         `)
         .eq('id', jsonCreationPromptId)
-        .single();
+        .limit(1);
 
+      if (jsonError) throw jsonError;
+      
+      const jsonPrompt = jsonPrompts?.[0];
       if (!jsonPrompt?.id || !jsonPrompt.prompt || !jsonPrompt.ai_models?.[0]?.model_id) {
         throw new Error('JSON creation prompt not found');
       }
