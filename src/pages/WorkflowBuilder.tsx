@@ -39,10 +39,16 @@ interface ToolsByType {
   action: Tool[];
 }
 
+interface SystemPrompt {
+  id: string;
+  prompt: string;
+  ai_models: {
+    model_id: string;
+  };
+}
+
 const extractJsonFromText = (text: string): string => {
   try {
-    console.log('Raw AI response:', text);
-
     const preprocessText = (str: string): string => {
       return str
         .replace(/[\x00-\x1F\x7F-\x9F]/g, '')
@@ -157,7 +163,7 @@ export default function WorkflowBuilder() {
     try {
       const { data: jsonCreationPrompt, error: jsonError } = await supabase
         .from('system_prompts')
-        .select('id, prompt, ai_model_id, ai_models!inner(model_id)')
+        .select('id, prompt, ai_models!inner(model_id)')
         .eq('step', 'json_creation')
         .single();
 
