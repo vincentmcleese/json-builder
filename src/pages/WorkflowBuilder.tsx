@@ -39,13 +39,6 @@ interface ToolsByType {
   action: Tool[];
 }
 
-interface ValidationPromptResponse {
-  id: string;
-  prompt: string;
-  ai_models: {
-    model_id: string;
-  }[];
-}
 
 const extractJsonFromText = (text: string): string => {
   try {
