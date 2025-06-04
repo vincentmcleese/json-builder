@@ -1,19 +1,6 @@
 import { Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import toast from 'react-hot-toast';
 
 export default function Header() {
-  const { user, signOut } = useAuth();
-
-  const handleLogout = async () => {
-    try {
-      await signOut();
-      toast.success('Logged out successfully');
-    } catch (error) {
-      toast.error('Failed to logout');
-    }
-  };
-
   return (
     <header className="bg-white border-b border-[--border-color]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,14 +10,6 @@ export default function Header() {
               Ghostteam JSON builder for N8N
             </h1>
           </Link>
-          {user && (
-            <button 
-              onClick={handleLogout}
-              className="btn btn-secondary"
-            >
-              Logout
-            </button>
-          )}
         </div>
       </div>
     </header>

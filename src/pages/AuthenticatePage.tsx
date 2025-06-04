@@ -28,14 +28,10 @@ export default function AuthenticatePage() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       addLog('Auth state change', session ? 'User logged in' : 'User logged out');
-      
-      if (session?.user) {
-        navigate('/');
-      }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const addLog = (event: string, details?: string) => {
     setLogs(prev => [...prev, {
@@ -103,7 +99,7 @@ export default function AuthenticatePage() {
               onClick={handleLogout}
               className="btn btn-primary"
             >
-              Logout
+              Sign Out
             </button>
           </div>
         ) : (
