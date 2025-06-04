@@ -77,6 +77,7 @@ export default function AuthenticatePage() {
       }
       addLog('Logout', 'User logged out successfully');
       toast.success('Logged out successfully');
+      navigate('/');
     } catch (error) {
       console.error('Error:', error);
       addLog('Logout error', error instanceof Error ? error.message : 'Unknown error');
