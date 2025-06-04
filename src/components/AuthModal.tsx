@@ -19,6 +19,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
+          redirectTo: `${window.location.origin}/authenticate`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
