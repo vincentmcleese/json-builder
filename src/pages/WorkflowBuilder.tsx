@@ -40,6 +40,7 @@ interface ToolsByType {
 }
 
 interface ValidationPromptResponse {
+  id: string;
   prompt: string;
   ai_models: {
     model_id: string;
@@ -245,6 +246,7 @@ export default function WorkflowBuilder() {
       const { data: validationPrompt } = await supabase
         .from('system_prompts')
         .select(`
+          id,
           prompt,
           ai_models!inner (
             model_id
@@ -253,7 +255,7 @@ export default function WorkflowBuilder() {
         .eq('step', 'validation')
         .single();
 
-      if (!validationPrompt?.prompt || !validationPrompt.ai_models?.[0]?.model_id) {
+      if (!validationPrompt?.id || !validationPrompt.prompt || !validationPrompt.ai_models?.[0]?.model_id) {
         throw new Error('Validation prompt not found');
       }
 
@@ -301,6 +303,7 @@ export default function WorkflowBuilder() {
       const { data: jsonPrompt } = await supabase
         .from('system_prompts')
         .select(`
+          id,
           prompt,
           ai_models!inner (
             model_id
@@ -309,7 +312,7 @@ export default function WorkflowBuilder() {
         .eq('id', jsonCreationPromptId)
         .single();
 
-      if (!jsonPrompt?.prompt || !jsonPrompt.ai_models?.[0]?.model_id) {
+      if (!jsonPrompt?.id || !jsonPrompt.prompt || !jsonPrompt.ai_models?.[0]?.model_id) {
         throw new Error('JSON creation prompt not found');
       }
 
