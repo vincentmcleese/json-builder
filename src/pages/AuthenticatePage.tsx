@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { User } from '@supabase/supabase-js';
 import { useAuth } from '@/providers/AuthProvider';
 
 interface AuthLog {
@@ -14,7 +13,6 @@ interface AuthLog {
 export default function AuthenticatePage() {
   const { user, signOut } = useAuth();
   const [logs, setLogs] = useState<AuthLog[]>([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Get initial session
