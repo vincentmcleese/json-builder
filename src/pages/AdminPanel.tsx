@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, checkSupabaseConnection } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import OpenRouterCredits from '@/components/OpenRouterCredits';
 
@@ -32,10 +32,22 @@ export default function AdminPanel() {
   const [newTrainingData, setNewTrainingData] = useState({ name: '', content: '' });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showFullPrompt, setShowFullPrompt] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<boolean | null>(null);
 
   useEffect(() => {
-    loadData();
+    checkConnection();
   }, []);
+
+  const checkConnection = async () => {
+    const isConnected = await checkSupabaseConnection();
+    setConnectionStatus(isConnected);
+    if (isConnected) {
+      loadData();
+    } else {
+      setIsLoading(false);
+      toast.error('Unable to connect to database. Please check your connection.');
+    }
+  };
 
   const loadData = async () => {
     try {
@@ -199,6 +211,30 @@ export default function AdminPanel() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[--brand-green]"></div>
+      </div>
+    );
+  }
+
+  if (connectionStatus === false) {
+    return (
+      <div className="section">
+        <div className="card">
+          <h2 className="text-2xl font-bold mb-4">Connection Error</h2>
+          <p className="text-[--text-secondary] mb-4">
+            Unable to connect to the database. This could be due to:
+          </p>
+          <ul className="list-disc list-inside mb-6 text-[--text-secondary]">
+            <li>Missing or incorrect environment variables</li>
+            <li>Network connectivity issues</li>
+            <li>Database service unavailability</li>
+          </ul>
+          <button
+            onClick={checkConnection}
+            className="btn btn-primary"
+          >
+            Retry Connection
+          </button>
+        </div>
       </div>
     );
   }
