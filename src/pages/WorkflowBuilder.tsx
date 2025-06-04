@@ -157,7 +157,7 @@ export default function WorkflowBuilder() {
     try {
       const { data: jsonCreationPrompt, error: jsonError } = await supabase
         .from('system_prompts')
-        .select('id, prompt, ai_model_id, ai_models(model_id)')
+        .select('id, prompt, ai_model_id, ai_models!inner(model_id)')
         .eq('step', 'json_creation')
         .single();
 
@@ -237,7 +237,7 @@ export default function WorkflowBuilder() {
       
       const { data: validationPrompt } = await supabase
         .from('system_prompts')
-        .select('id, prompt, ai_model_id, ai_models(model_id)')
+        .select('prompt, ai_models!inner(model_id)')
         .eq('step', 'validation')
         .single();
 
@@ -288,7 +288,7 @@ export default function WorkflowBuilder() {
 
       const { data: jsonPrompt } = await supabase
         .from('system_prompts')
-        .select('prompt, ai_models(model_id)')
+        .select('prompt, ai_models!inner(model_id)')
         .eq('id', jsonCreationPromptId)
         .single();
 
