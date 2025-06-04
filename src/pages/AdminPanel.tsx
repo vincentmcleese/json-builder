@@ -62,7 +62,7 @@ const AdminPanel: React.FC = () => {
 
       if (error) throw error;
 
-      loadTrainingData();
+      await loadTrainingData();
       toast.success(`Successfully added ${validData.length} training examples`);
       
       // Reset the file input
