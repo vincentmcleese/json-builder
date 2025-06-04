@@ -15,4 +15,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       'X-Client-Info': 'json-creator',
     },
   },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  }
 })

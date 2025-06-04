@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthLog {
   timestamp: string;
@@ -11,6 +12,7 @@ interface AuthLog {
 export default function AuthenticatePage() {
   const [user, setUser] = useState(null);
   const [logs, setLogs] = useState<AuthLog[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Get initial session
@@ -25,10 +27,14 @@ export default function AuthenticatePage() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       addLog('Auth state change', session ? 'User logged in' : 'User logged out');
+      
+      if (session?.user) {
+        navigate('/');
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
   const addLog = (event: string, details?: string) => {
     setLogs(prev => [...prev, {
@@ -43,7 +49,7 @@ export default function AuthenticatePage() {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/authenticate`,
+          redirectTo: `${window.location.origin}`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
