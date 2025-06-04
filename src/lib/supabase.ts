@@ -8,8 +8,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    flowType: 'pkce',
-    redirectTo: 'https://chisobhtsmrlyjcplduc.stackblitz.io/auth/callback'
+    flowType: 'pkce'
   },
   global: {
     headers: {
