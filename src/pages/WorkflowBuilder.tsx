@@ -158,7 +158,7 @@ export default function WorkflowBuilder() {
         .select(`
           id,
           prompt,
-          ai_models!inner (
+          ai_models (
             model_id
           )
         `)
@@ -244,7 +244,7 @@ export default function WorkflowBuilder() {
         .select(`
           id,
           prompt,
-          ai_models!inner (
+          ai_models (
             model_id
           )
         `)
@@ -254,12 +254,12 @@ export default function WorkflowBuilder() {
       if (validationError) throw validationError;
       
       const validationPrompt = validationPrompts?.[0];
-      if (!validationPrompt?.id || !validationPrompt.prompt || !validationPrompt.ai_models?.[0]?.model_id) {
+      if (!validationPrompt?.id || !validationPrompt.prompt || !validationPrompt.ai_models?.model_id) {
         throw new Error('Validation prompt not found');
       }
 
       const result = await callOpenRouter(
-        validationPrompt.ai_models[0].model_id,
+        validationPrompt.ai_models.model_id,
         validationPrompt.prompt,
         inputPrompt
       );
@@ -309,7 +309,7 @@ export default function WorkflowBuilder() {
         .select(`
           id,
           prompt,
-          ai_models!inner (
+          ai_models (
             model_id
           )
         `)
@@ -319,12 +319,12 @@ export default function WorkflowBuilder() {
       if (jsonError) throw jsonError;
       
       const jsonPrompt = jsonPrompts?.[0];
-      if (!jsonPrompt?.id || !jsonPrompt.prompt || !jsonPrompt.ai_models?.[0]?.model_id) {
+      if (!jsonPrompt?.id || !jsonPrompt.prompt || !jsonPrompt.ai_models?.model_id) {
         throw new Error('JSON creation prompt not found');
       }
 
       const result = await callOpenRouter(
-        jsonPrompt.ai_models[0].model_id,
+        jsonPrompt.ai_models.model_id,
         jsonPrompt.prompt,
         JSON.stringify(workflowData)
       );
