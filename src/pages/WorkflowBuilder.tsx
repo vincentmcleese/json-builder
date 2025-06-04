@@ -39,12 +39,6 @@ interface ToolsByType {
   action: Tool[];
 }
 
-interface TrainingData {
-  id: string;
-  name: string;
-  content: string;
-}
-
 const extractJsonFromText = (text: string): string => {
   try {
     console.log('Raw AI response:', text);
@@ -127,12 +121,12 @@ const extractJsonFromText = (text: string): string => {
 
     throw new Error('No valid JSON object found in text');
   } catch (error) {
-    console.error('Failed to extract JSON from text. Error:', error);
-    console.error('Original text:', text);
-    if (error instanceof SyntaxError) {
-      console.error('JSON Syntax Error:', error.message);
+    if (error instanceof Error) {
+      console.error('Failed to extract JSON from text. Error:', error.message);
+      console.error('Original text:', text);
+      throw new Error(`Invalid JSON structure in response: ${error.message}`);
     }
-    throw new Error(`Invalid JSON structure in response: ${error.message}`);
+    throw error;
   }
 };
 
@@ -140,13 +134,11 @@ export default function WorkflowBuilder() {
   const navigate = useNavigate();
   const [inputPrompt, setInputPrompt] = useState('');
   const [workflowData, setWorkflowData] = useState<WorkflowData | null>(null);
-  const [jsonOutput, setJsonOutput] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [isValidated, setIsValidated] = useState(false);
   const [isCreatingJson, setIsCreatingJson] = useState(false);
   const [validationPromptId, setValidationPromptId] = useState<string | null>(null);
   const [jsonCreationPromptId, setJsonCreationPromptId] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
   const [tools, setTools] = useState<ToolsByType>({
     trigger: [],
     process: [],
@@ -154,29 +146,12 @@ export default function WorkflowBuilder() {
   });
   const [existingWorkflows, setExistingWorkflows] = useState<ExistingWorkflow[]>([]);
   const [isLoadingWorkflows, setIsLoadingWorkflows] = useState(false);
-  const [trainingData, setTrainingData] = useState<TrainingData[]>([]);
 
   useEffect(() => {
     loadTools();
     loadExistingWorkflows();
     loadPrompts();
-    loadTrainingData();
   }, []);
-
-  const loadTrainingData = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('training_data')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setTrainingData(data || []);
-    } catch (error) {
-      console.error('Failed to load training data:', error);
-      toast.error('Failed to load training data');
-    }
-  };
 
   const loadPrompts = async () => {
     try {
@@ -187,7 +162,7 @@ export default function WorkflowBuilder() {
         .single();
 
       if (jsonError) throw jsonError;
-      if (jsonCreationPrompt) {
+      if (jsonCreationPrompt?.id) {
         setJsonCreationPromptId(jsonCreationPrompt.id);
       }
 
@@ -198,7 +173,7 @@ export default function WorkflowBuilder() {
         .single();
 
       if (validationError) throw validationError;
-      if (validationPrompt) {
+      if (validationPrompt?.id) {
         setValidationPromptId(validationPrompt.id);
       }
     } catch (error) {
@@ -530,12 +505,10 @@ export default function WorkflowBuilder() {
             <button
               className="btn btn-primary"
               onClick={createJson}
-              disabled={isCreatingJson || !validationPromptId || isSaving}
+              disabled={isCreatingJson || !validationPromptId}
             >
               {isCreatingJson
                 ? 'Creating JSON...'
-                : isSaving
-                ? 'Saving...'
                 : 'Create JSON'}
             </button>
           </div>
