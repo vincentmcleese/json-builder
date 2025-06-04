@@ -246,12 +246,12 @@ export default function WorkflowBuilder() {
         .eq('step', 'validation')
         .single();
 
-      if (!validationPrompt?.prompt || !validationPrompt.ai_models?.model_id) {
+      if (!validationPrompt?.prompt || !validationPrompt.ai_models?.[0]?.model_id) {
         throw new Error('Validation prompt not found');
       }
 
       const result = await callOpenRouter(
-        validationPrompt.ai_models.model_id,
+        validationPrompt.ai_models[0].model_id,
         validationPrompt.prompt,
         inputPrompt
       );
@@ -302,12 +302,12 @@ export default function WorkflowBuilder() {
         .eq('id', jsonCreationPromptId)
         .single();
 
-      if (!jsonPrompt?.prompt || !jsonPrompt.ai_models?.model_id) {
+      if (!jsonPrompt?.prompt || !jsonPrompt.ai_models?.[0]?.model_id) {
         throw new Error('JSON creation prompt not found');
       }
 
       const result = await callOpenRouter(
-        jsonPrompt.ai_models.model_id,
+        jsonPrompt.ai_models[0].model_id,
         jsonPrompt.prompt,
         JSON.stringify(workflowData)
       );
