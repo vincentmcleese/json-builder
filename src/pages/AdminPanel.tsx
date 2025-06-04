@@ -40,3 +40,5 @@ const handleJsonUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     toast.error('Failed to add JSON training data');
   }
 };
+
+export default handleJsonUpload
