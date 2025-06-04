@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { User } from '@supabase/supabase-js';
 
 interface AuthLog {
   timestamp: string;
@@ -10,7 +11,7 @@ interface AuthLog {
 }
 
 export default function AuthenticatePage() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [logs, setLogs] = useState<AuthLog[]>([]);
   const navigate = useNavigate();
 
@@ -57,11 +58,17 @@ export default function AuthenticatePage() {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error:', error);
+        addLog('Login error', error instanceof Error ? error.message : 'Unknown error');
+        toast.error('Failed to login with Google');
+        return;
+      }
+
       addLog('Google login initiated', data ? 'Redirect started' : 'No redirect');
     } catch (error) {
       console.error('Error:', error);
-      addLog('Login error', error.message);
+      addLog('Login error', error instanceof Error ? error.message : 'Unknown error');
       toast.error('Failed to login with Google');
     }
   };
@@ -69,12 +76,14 @@ export default function AuthenticatePage() {
   const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       addLog('Logout', 'User logged out successfully');
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Error:', error);
-      addLog('Logout error', error.message);
+      addLog('Logout error', error instanceof Error ? error.message : 'Unknown error');
       toast.error('Failed to logout');
     }
   };
