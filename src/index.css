@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-green: #32da94;
+  --brand-green-dark: #2bb885;
+  --text-primary: #000000;
+  --text-secondary: #6b7280;
+  --border-color: #e5e7eb;
+  --bg-secondary: #f8f9fa;
+}
+
+@layer base {
+  body {
+    @apply text-[--text-primary] bg-[--bg-secondary];
+  }
+
+  h1 {
+    @apply text-4xl font-bold mb-8;
+  }
+
+  h2 {
+    @apply text-2xl font-bold mb-6;
+  }
+
+  h3 {
+    @apply text-xl font-semibold mb-4;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-8 py-4 rounded-lg font-semibold transition-all duration-200 text-center;
+  }
+  
+  .btn-primary {
+    @apply bg-[--brand-green] text-white hover:bg-[--brand-green-dark] hover:shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-[--text-primary] border border-[--border-color] hover:border-[--brand-green] hover:shadow-md;
+  }
+
+  .input {
+    @apply w-full px-4 py-3 border border-[--border-color] rounded-lg bg-white
+    focus:outline-none focus:ring-2 focus:ring-[--brand-green] focus:border-transparent
+    placeholder-[--text-secondary];
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-md p-8 transition-all duration-200 hover:shadow-lg;
+  }
+
+  .section {
+    @apply max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8;
+  }
+
+  .tool-button {
+    @apply flex flex-col items-center p-4 rounded-lg transition-all duration-200 bg-white
+    border-2 hover:shadow-md hover:scale-[1.02] min-w-[120px];
+  }
+
+  .tool-button.selected {
+    @apply border-[--brand-green] bg-[#d1fae5];
+  }
+
+  .tool-icon {
+    @apply w-12 h-12 mb-2 object-contain;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
